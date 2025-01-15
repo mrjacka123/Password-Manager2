@@ -5,7 +5,7 @@ function Home() {
   const { state } = useLocation();
   return (
     <div>
-      <h1>Welcome, {state.username}</h1>
+      <h1>Hello bro. Welcome, {state.username}</h1>
       <p>Email: {state.email}</p>
     </div>
   );
