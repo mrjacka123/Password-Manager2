@@ -15,7 +15,7 @@ function Login() {
     try {
       // Send login request to the backend
       const response = await axios.post(
-        "https://password-theta-henna.vercel.app/api/users/login",
+        "https://password-manager2-alpha.vercel.app/api/users/login",
         formData
       );
 

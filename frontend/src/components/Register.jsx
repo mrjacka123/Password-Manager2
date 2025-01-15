@@ -17,7 +17,7 @@ function Register() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://password-theta-henna.vercel.app/api/users/register",
+        "https://password-manager2-alpha.vercel.app/api/users/register",
         formData
       );
 
