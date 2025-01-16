@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 function Home() {
+  const { state } = useLocation();
   const [accountData, setAccountData] = useState({
     username: "",
     password: "",
@@ -89,7 +91,8 @@ function Home() {
 
   return (
     <div>
-      <h1>Welcome to Account Manager</h1>
+      <h1>Hello bro. Welcome, {state.username}</h1>
+      <p>Email: {state.email}</p>
 
       {/* Add Account Modal */}
       <button
