@@ -3,7 +3,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 
 function Home() {
-  const { state } = useLocation(); // Access the logged-in user's data (username, email)
+  const { state } = useLocation();
   const [accountData, setAccountData] = useState({
     username: "",
     password: "",
@@ -14,14 +14,8 @@ function Home() {
   // Fetch all accounts
   const fetchAccounts = async () => {
     try {
-      const response = await axios.get(
-        "https://password-manager2-alpha.vercel.app/api/accounts"
-      );
-      // Filter accounts to only show the logged-in user's accounts
-      const userAccounts = response.data.filter(
-        (account) => account.username === state.username
-      );
-      setAccounts(userAccounts);
+      const response = await axios.get("http://localhost:5000/api/accounts");
+      setAccounts(response.data);
     } catch (error) {
       console.error("Failed to fetch accounts", error);
     }
@@ -42,12 +36,12 @@ function Home() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://password-manager2-alpha.vercel.app/api/accounts",
-        { ...accountData, username: state.username } // Attach the logged-in username
+        "http://localhost:5000/api/accounts",
+        accountData
       );
       alert(response.data.message);
-      fetchAccounts(); // Refresh the account list
-      setAccountData({ username: "", password: "" }); // Clear the form
+      fetchAccounts();
+      setAccountData({ username: "", password: "" });
     } catch (error) {
       console.error("Failed to add account", error);
       alert("Failed to add account");
@@ -65,11 +59,11 @@ function Home() {
     e.preventDefault();
     try {
       const response = await axios.put(
-        `https://password-manager2-alpha.vercel.app/api/accounts/${selectedAccount._id}`,
+        "http://localhost:5000/api/accounts/${selectedAccount._id}",
         accountData
       );
       alert(response.data.message);
-      fetchAccounts(); // Refresh the account list
+      fetchAccounts();
       setSelectedAccount(null); // Close modal
     } catch (error) {
       console.error("Failed to update account", error);
@@ -83,10 +77,10 @@ function Home() {
       return;
     try {
       const response = await axios.delete(
-        `https://password-manager2-alpha.vercel.app/api/accounts/${id}`
+        "http://localhost:5000/api/accounts/${id}"
       );
       alert(response.data.message);
-      fetchAccounts(); // Refresh the account list
+      fetchAccounts();
     } catch (error) {
       console.error("Failed to delete account", error);
       alert("Failed to delete account");
@@ -210,7 +204,7 @@ function Home() {
         <ul>
           {accounts.map((account) => (
             <li key={account._id}>
-              {account.username} - {account.password} - {account._id}
+              {account.username} - {account.password}
               <button
                 onClick={() => handleEditClick(account)}
                 className="btn btn-sm btn-warning mx-2"
