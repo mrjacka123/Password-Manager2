@@ -3,7 +3,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 
 function Home() {
-  const { state } = useLocation();
+  const { state } = useLocation(); // Access the logged-in user's data (username, email)
   const [accountData, setAccountData] = useState({
     username: "",
     password: "",
@@ -17,7 +17,11 @@ function Home() {
       const response = await axios.get(
         "https://password-manager2-alpha.vercel.app/api/accounts"
       );
-      setAccounts(response.data);
+      // Filter accounts to only show the logged-in user's accounts
+      const userAccounts = response.data.filter(
+        (account) => account.username === state.username
+      );
+      setAccounts(userAccounts);
     } catch (error) {
       console.error("Failed to fetch accounts", error);
     }
@@ -39,11 +43,11 @@ function Home() {
     try {
       const response = await axios.post(
         "https://password-manager2-alpha.vercel.app/api/accounts",
-        accountData
+        { ...accountData, username: state.username } // Attach the logged-in username
       );
       alert(response.data.message);
-      fetchAccounts();
-      setAccountData({ username: "", password: "" });
+      fetchAccounts(); // Refresh the account list
+      setAccountData({ username: "", password: "" }); // Clear the form
     } catch (error) {
       console.error("Failed to add account", error);
       alert("Failed to add account");
@@ -65,7 +69,7 @@ function Home() {
         accountData
       );
       alert(response.data.message);
-      fetchAccounts();
+      fetchAccounts(); // Refresh the account list
       setSelectedAccount(null); // Close modal
     } catch (error) {
       console.error("Failed to update account", error);
@@ -82,7 +86,7 @@ function Home() {
         `https://password-manager2-alpha.vercel.app/api/accounts/${id}`
       );
       alert(response.data.message);
-      fetchAccounts();
+      fetchAccounts(); // Refresh the account list
     } catch (error) {
       console.error("Failed to delete account", error);
       alert("Failed to delete account");
@@ -206,7 +210,7 @@ function Home() {
         <ul>
           {accounts.map((account) => (
             <li key={account._id}>
-              {account.username} - {account.password}
+              {account.username} - {account.password} - {account._id}
               <button
                 onClick={() => handleEditClick(account)}
                 className="btn btn-sm btn-warning mx-2"
