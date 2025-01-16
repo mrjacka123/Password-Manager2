@@ -7,6 +7,7 @@ function Home() {
   const [accountData, setAccountData] = useState({
     username: "",
     password: "",
+    acctype: "",
   });
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null); // For editing
@@ -41,7 +42,7 @@ function Home() {
       );
       alert(response.data.message);
       fetchAccounts();
-      setAccountData({ username: "", password: "" });
+      setAccountData({ username: "", password: "", acctype: "" });
     } catch (error) {
       console.error("Failed to add account", error);
       alert("Failed to add account");
@@ -140,6 +141,16 @@ function Home() {
                   required
                 />
 
+                <label>acctype</label>
+                <input
+                  type="text"
+                  name="acctype"
+                  value={accountData.acctype}
+                  onChange={handleChange}
+                  className="form-control mb-3"
+                  required
+                />
+
                 <button type="submit" className="btn btn-primary">
                   Add Account
                 </button>
@@ -188,6 +199,16 @@ function Home() {
                     required
                   />
 
+                  <label>acctype</label>
+                  <input
+                    type="text"
+                    name="acctype"
+                    value={accountData.acctype}
+                    onChange={handleChange}
+                    className="form-control mb-3"
+                    required
+                  />
+
                   <button type="submit" className="btn btn-primary">
                     Update Account
                   </button>
@@ -204,7 +225,7 @@ function Home() {
         <ul>
           {accounts.map((account) => (
             <li key={account._id}>
-              {account.username} - {account.password}
+              {account.username} - {account.password} - {account.acctype}
               <button
                 onClick={() => handleEditClick(account)}
                 className="btn btn-sm btn-warning mx-2"

@@ -13,14 +13,14 @@ const getAccounts = async (req, res) => {
 
 // Add a new account
 const addAccount = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, acctype } = req.body;
 
-  if (!username || !password) {
+  if (!username || !password || !acctype) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
-    const newAccount = new Account({ username, password });
+    const newAccount = new Account({ username, password, acctype });
     await newAccount.save();
     res.status(201).json({ message: "Account added successfully", newAccount });
   } catch (err) {
@@ -32,16 +32,16 @@ const addAccount = async (req, res) => {
 // Update an account
 const updateAccount = async (req, res) => {
   const { id } = req.params;
-  const { username, password } = req.body;
+  const { username, password, acctype } = req.body;
 
-  if (!username || !password) {
+  if (!username || !password || !acctype) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
     const updatedAccount = await Account.findByIdAndUpdate(
       id,
-      { username, password },
+      { username, password, acctype },
       { new: true } // Return the updated document
     );
 
