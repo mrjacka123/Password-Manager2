@@ -3,7 +3,8 @@ import axios from "axios";
 import { useLocation, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./CSS/Home.css";
-import { Key, Lock, LogOut, Plus, Edit2, Trash2 } from "lucide-react";
+import { Key, Lock, LogOut, Plus, Edit2, Trash2, Settings } from "lucide-react";
+import Footer from "./Footer";
 
 function Home() {
   const { state } = useLocation();
@@ -102,12 +103,19 @@ function Home() {
         </h1>
 
         <br />
-        <div className="d-flex justify-content-center mb-4">
+        <div
+          style={{ gap: "5px" }}
+          className="d-flex justify-content-center mb-4"
+        >
+          <button className="btn btn-secondary btn-lg">
+            <Settings />
+          </button>
           <Link to="/">
-            <button className="btn btn-outline-danger btn-lg">Logout</button>
+            <button className="btn btn-danger btn-lg">
+              <LogOut />
+            </button>
           </Link>
         </div>
-
         <div className="d-flex justify-content-center mb-4">
           <button
             type="button"
@@ -118,7 +126,6 @@ function Home() {
             Add Account
           </button>
         </div>
-
         {/* Add Account Modal */}
         <div
           className="modal fade"
@@ -190,8 +197,9 @@ function Home() {
             </div>
           </div>
         </div>
+        <hr style={{ border: "solid 1px white", marginBottom: "30px" }} />
 
-        <h2 className="text-center text-secondary mt-5">Your Accounts</h2>
+        <h2 className="text-center text-secondary m-4">Your Accounts</h2>
         <div className="row row-cols-1 row-cols-md-3 g-4">
           {userAccounts.map((account) => (
             <div key={account._id} className="col">
@@ -200,8 +208,12 @@ function Home() {
                 className="card shadow-sm mb-3"
               >
                 <div className="card-body">
-                  <h5 className="card-title">{account.accountType}</h5>
-                  <p className="card-text">{account.accountPassword}</p>
+                  <h5 className="card-title">
+                    Username: {account.accountType}
+                  </h5>
+                  <p className="card-text">
+                    Password: {account.accountPassword.replace(/./g, "*")}
+                  </p>
                   <div className="d-flex justify-content-between">
                     <button
                       onClick={() => {
@@ -226,35 +238,39 @@ function Home() {
           ))}
         </div>
 
+        <Footer />
+
         {editAccount && (
           <div className="modal show d-block" tabIndex="-1">
             <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
-                <div className="modal-header">
+              <div className="modal-content bg-black text-white">
+                <div className="modal-header bg-black">
                   <h5 className="modal-title">Update Account</h5>
                   <button
                     type="button"
-                    className="btn-close"
+                    className="btn-close bg-white"
                     onClick={() => setEditAccount(null)}
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <label>Account Type</label>
+                  <label className="mb-2">Username</label>
                   <input
+                    style={{ border: "none" }}
                     type="text"
                     value={editAccountType}
                     onChange={(e) => setEditAccountType(e.target.value)}
-                    className="form-control"
+                    className="form-control bg-dark text-white mb-4"
                   />
-                  <label>Account Password</label>
+                  <label className="mb-2">Password</label>
                   <input
-                    type="password"
+                    type="text"
+                    style={{ border: "none" }}
                     value={editAccountPassword}
                     onChange={(e) => setEditAccountPassword(e.target.value)}
-                    className="form-control"
+                    className="form-control bg-dark text-white mb-4"
                   />
                 </div>
-                <div className="modal-footer">
+                <div className="modal-footer bg-black">
                   <button
                     onClick={() => setEditAccount(null)}
                     className="btn btn-secondary"
