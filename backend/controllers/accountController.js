@@ -1,68 +1,60 @@
 const Account = require("../models/accountModel");
 
+// Add a new account
+const addAccount = async (req, res) => {
+  try {
+    const { userEmail, accountType, accountPassword } = req.body;
+
+    const newAccount = new Account({
+      userEmail,
+      accountType,
+      accountPassword,
+    });
+
+    await newAccount.save();
+    res.status(201).json(newAccount);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get all accounts
 const getAccounts = async (req, res) => {
   try {
     const accounts = await Account.find();
     res.status(200).json(accounts);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to retrieve accounts" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-// Add a new account
-const addAccount = async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
-  try {
-    const newAccount = new Account({ username, password });
-    await newAccount.save();
-    res.status(201).json({ message: "Account added successfully", newAccount });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to add account" });
-  }
-};
-
-// Update an account
+// Update account
 const updateAccount = async (req, res) => {
-  const { id } = req.params;
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
   try {
+    const { id } = req.params;
+    const { accountType, accountPassword } = req.body;
+
     const updatedAccount = await Account.findByIdAndUpdate(
       id,
-      { username, password },
-      { new: true } // Return the updated document
+      { accountType, accountPassword },
+      { new: true }
     );
 
     if (!updatedAccount) {
       return res.status(404).json({ message: "Account not found" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Account updated successfully", updatedAccount });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to update account" });
+    res.status(200).json(updatedAccount);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-// Delete an account
+// Delete account
 const deleteAccount = async (req, res) => {
-  const { id } = req.params;
-
   try {
+    const { id } = req.params;
+
     const deletedAccount = await Account.findByIdAndDelete(id);
 
     if (!deletedAccount) {
@@ -70,10 +62,9 @@ const deleteAccount = async (req, res) => {
     }
 
     res.status(200).json({ message: "Account deleted successfully" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to delete account" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { getAccounts, addAccount, updateAccount, deleteAccount };
+module.exports = { addAccount, getAccounts, updateAccount, deleteAccount };

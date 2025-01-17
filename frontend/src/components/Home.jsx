@@ -1,161 +1,148 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function Home() {
   const { state } = useLocation();
-  const [accountData, setAccountData] = useState({
-    username: "",
-    password: "",
-  });
+  const [accountType, setAccountType] = useState("");
+  const [accountPassword, setAccountPassword] = useState("");
   const [accounts, setAccounts] = useState([]);
-  const [selectedAccount, setSelectedAccount] = useState(null); // For editing
-
-  // Fetch all accounts
-  const fetchAccounts = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/accounts");
-      setAccounts(response.data);
-    } catch (error) {
-      console.error("Failed to fetch accounts", error);
-    }
-  };
+  const [editAccount, setEditAccount] = useState(null); // For editing an account
+  const [editAccountType, setEditAccountType] = useState("");
+  const [editAccountPassword, setEditAccountPassword] = useState("");
 
   useEffect(() => {
     fetchAccounts();
   }, []);
 
-  // Handle input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAccountData({ ...accountData, [name]: value });
+  const fetchAccounts = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/accounts/all"
+      );
+      setAccounts(response.data);
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    }
   };
 
-  // Add new account
-  const handleSubmit = async (e) => {
+  const handleAddAccount = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/accounts",
-        accountData
+        "http://localhost:5000/api/accounts/add",
+        {
+          userEmail: state.email,
+          accountType,
+          accountPassword,
+        }
       );
-      alert(response.data.message);
-      fetchAccounts();
-      setAccountData({ username: "", password: "" });
+
+      setAccountType("");
+      setAccountPassword("");
+      setAccounts((prev) => [...prev, response.data]);
     } catch (error) {
-      console.error("Failed to add account", error);
-      alert("Failed to add account");
+      console.error("Error adding account:", error);
     }
   };
 
-  // Handle update button click (open modal)
-  const handleEditClick = (account) => {
-    setSelectedAccount(account);
-    setAccountData(account);
-  };
-
-  // Update account
-  const handleUpdate = async (e) => {
-    e.preventDefault();
+  const handleUpdateAccount = async (id) => {
     try {
       const response = await axios.put(
-        "http://localhost:5000/api/accounts/${selectedAccount._id}",
-        accountData
+        `http://localhost:5000/api/accounts/update/${id}`,
+        {
+          accountType: editAccountType,
+          accountPassword: editAccountPassword,
+        }
       );
-      alert(response.data.message);
-      fetchAccounts();
-      setSelectedAccount(null); // Close modal
+      setAccounts((prev) =>
+        prev.map((account) =>
+          account._id === id ? { ...account, ...response.data } : account
+        )
+      );
+      setEditAccount(null); // Close the modal
     } catch (error) {
-      console.error("Failed to update account", error);
-      alert("Failed to update account");
+      console.error("Error updating account:", error);
     }
   };
 
-  // Delete account
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this account?"))
-      return;
+  const handleDeleteAccount = async (id) => {
     try {
-      const response = await axios.delete(
-        "http://localhost:5000/api/accounts/${id}"
-      );
-      alert(response.data.message);
-      fetchAccounts();
+      await axios.delete(`http://localhost:5000/api/accounts/delete/${id}`);
+      setAccounts((prev) => prev.filter((account) => account._id !== id));
     } catch (error) {
-      console.error("Failed to delete account", error);
-      alert("Failed to delete account");
+      console.error("Error deleting account:", error);
     }
   };
+
+  const userAccounts = accounts.filter(
+    (account) => account.userEmail === state.email
+  );
 
   return (
     <div>
-      <h1>Hello bro. Welcome, {state.username}</h1>
+      <h1>Hello, {state.username}</h1>
       <p>Email: {state.email}</p>
+      <br />
+      <Link to="/">
+        <button>Logout</button>
+      </Link>
+      <br />
 
-      {/* Add Account Modal */}
-      <button
-        type="button"
-        className="btn btn-primary"
-        data-bs-toggle="modal"
-        data-bs-target="#addModal"
-      >
-        Add Account
-      </button>
+      <form onSubmit={handleAddAccount}>
+        <label htmlFor="accountType">Account type</label>
+        <input
+          type="text"
+          id="accountType"
+          value={accountType}
+          onChange={(e) => setAccountType(e.target.value)}
+          required
+        />
+        <br />
 
-      <div
-        className="modal fade"
-        id="addModal"
-        tabIndex="-1"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Add Account</h5>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-              ></button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={handleSubmit}>
-                <label>Username</label>
-                <input
-                  type="text"
-                  name="username"
-                  value={accountData.username}
-                  onChange={handleChange}
-                  className="form-control mb-3"
-                  required
-                />
+        <label htmlFor="accountPassword">Account password</label>
+        <input
+          type="password"
+          id="accountPassword"
+          value={accountPassword}
+          onChange={(e) => setAccountPassword(e.target.value)}
+          required
+        />
+        <br />
 
-                <label>Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  value={accountData.password}
-                  onChange={handleChange}
-                  className="form-control mb-3"
-                  required
-                />
+        <button type="submit" className="btn btn-primary">
+          Add Account
+        </button>
+      </form>
 
-                <button type="submit" className="btn btn-primary">
-                  Add Account
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h2>Added Accounts</h2>
+      <ul>
+        {userAccounts.map((account) => (
+          <li key={account._id}>
+            {account.accountType} - {account.accountPassword}
+            <button
+              onClick={() => {
+                setEditAccount(account);
+                setEditAccountType(account.accountType);
+                setEditAccountPassword(account.accountPassword);
+              }}
+              className="btn btn-warning btn-sm mx-2"
+            >
+              Update
+            </button>
+            <button
+              onClick={() => handleDeleteAccount(account._id)}
+              className="btn btn-danger btn-sm"
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
 
-      {/* Update Account Modal */}
-      {selectedAccount && (
-        <div
-          className="modal fade show d-block"
-          tabIndex="-1"
-          aria-hidden="true"
-        >
+      {editAccount && (
+        <div className="modal show d-block" tabIndex="-1">
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
@@ -163,64 +150,43 @@ function Home() {
                 <button
                   type="button"
                   className="btn-close"
-                  onClick={() => setSelectedAccount(null)}
+                  onClick={() => setEditAccount(null)}
                 ></button>
               </div>
               <div className="modal-body">
-                <form onSubmit={handleUpdate}>
-                  <label>Username</label>
-                  <input
-                    type="text"
-                    name="username"
-                    value={accountData.username}
-                    onChange={handleChange}
-                    className="form-control mb-3"
-                    required
-                  />
-
-                  <label>Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={accountData.password}
-                    onChange={handleChange}
-                    className="form-control mb-3"
-                    required
-                  />
-
-                  <button type="submit" className="btn btn-primary">
-                    Update Account
-                  </button>
-                </form>
+                <label>Account Type</label>
+                <input
+                  type="text"
+                  value={editAccountType}
+                  onChange={(e) => setEditAccountType(e.target.value)}
+                  className="form-control"
+                />
+                <label>Account Password</label>
+                <input
+                  type="password"
+                  value={editAccountPassword}
+                  onChange={(e) => setEditAccountPassword(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+              <div className="modal-footer">
+                <button
+                  onClick={() => setEditAccount(null)}
+                  className="btn btn-secondary"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => handleUpdateAccount(editAccount._id)}
+                  className="btn btn-primary"
+                >
+                  Save changes
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
-
-      {/* Account List */}
-      <div className="mt-5">
-        <h2>Account List</h2>
-        <ul>
-          {accounts.map((account) => (
-            <li key={account._id}>
-              {account.username} - {account.password}
-              <button
-                onClick={() => handleEditClick(account)}
-                className="btn btn-sm btn-warning mx-2"
-              >
-                Update
-              </button>
-              <button
-                onClick={() => handleDelete(account._id)}
-                className="btn btn-sm btn-danger"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 }
