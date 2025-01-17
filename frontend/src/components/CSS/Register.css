@@ -50,13 +50,13 @@
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-.card button {
+.card .accBtn {
   background: linear-gradient(45deg, #007bff, #0056b3);
   border: none;
   transition: background 0.3s;
 }
 
-.card button:hover {
+.card .accBtn:hover {
   background: linear-gradient(45deg, #0056b3, #003f7f);
 }
 

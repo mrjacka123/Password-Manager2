@@ -1,69 +1,28 @@
-.card {
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+/* Custom Styling for Password Manager */
+body {
+  background-color: #f8f9fa;
 }
 
-.card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0px 12px 20px rgba(0, 0, 0, 0.1);
+h1,
+h2 {
+  font-family: "Arial", sans-serif;
 }
 
-.card-body {
-  padding: 2rem;
+button {
+  font-size: 1.1rem;
 }
 
-.card-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #4b8b3b;
+.modal-content {
+  border-radius: 10px;
 }
 
-.card-text {
-  font-size: 1rem;
-  color: #555;
+.list-group-item {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 
-.card .btn {
-  font-size: 1rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  border-radius: 25px;
-  padding: 12px 18px;
-}
-
-.card .btn:hover {
-  transform: scale(1.05);
-}
-
-.card .btn-warning {
-  background-color: #ffc107;
-  border-color: #ffc107;
-  color: white;
-}
-
-.card .btn-danger {
-  background-color: #dc3545;
-  border-color: #dc3545;
-  color: white;
-}
-
-.card .btn-warning:hover {
-  background-color: #e0a800;
-  border-color: #e0a800;
-}
-
-.card .btn-danger:hover {
-  background-color: #c82333;
-  border-color: #c82333;
-}
-
-.card-body .btn i {
-  margin-right: 8px;
-}
-
-.hover-shadow {
-  box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.05);
-}
-
-.card-title {
-  font-family: "Montserrat", sans-serif;
+.modal-header,
+.modal-footer {
+  background-color: #f1f1f1;
 }
