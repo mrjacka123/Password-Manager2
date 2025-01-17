@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Swal from "sweetalert2"; // Import SweetAlert2
+import "./CSS/Register.css"; // External CSS file for custom styles
 
 function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false); // New state for spinner
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -12,6 +16,10 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Show the spinner when the login button is clicked
+    setIsLoading(true);
+
     try {
       // Send login request to the backend
       const response = await axios.post(
@@ -25,28 +33,81 @@ function Login() {
       // Redirect to the Home page with username and email
       navigate("/home", { state: { username, email } });
     } catch (error) {
-      // Handle errors
-      alert(error.response?.data?.message || "Login failed. Please try again.");
+      // Use SweetAlert2 to show a pop-up for errors
+      Swal.fire({
+        title: "Login failed",
+        text: "Invalid credentials. Please check your email and password.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    } finally {
+      // Hide the spinner after 2 seconds
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        name="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-      />
-      <button type="submit">Login</button>
-    </form>
+    <>
+      <div className="bgImg">
+        <div className="login-container d-flex justify-content-center align-items-center">
+          <div className="card shadow-lg p-4">
+            <h2 className="text-center text-primary mb-4">Login</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  className="form-control"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  id="password"
+                  className="form-control"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+              <button type="submit" className="btn btn-primary w-100">
+                Login
+              </button>
+
+              {isLoading && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "10px",
+                  }}
+                >
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              )}
+            </form>
+            <p className="text-center mt-3">
+              Don't have an account? <Link to="/register">Register here</Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
