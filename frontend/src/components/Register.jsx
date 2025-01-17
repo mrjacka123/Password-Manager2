@@ -94,6 +94,13 @@ function Register() {
             <p className="text-center mt-3">
               Already have an account? <Link to="/login">Login here</Link>
             </p>
+
+            <span
+              style={{ fontSize: "14px", color: "red" }}
+              className="text-center"
+            >
+              This application made testing purposes for only!
+            </span>
           </div>
         </div>
       </div>

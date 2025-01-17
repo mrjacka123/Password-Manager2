@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./CSS/Home.css";
 
 function Home() {
   const { state } = useLocation();
@@ -90,31 +91,83 @@ function Home() {
       </Link>
       <br />
 
-      <form onSubmit={handleAddAccount}>
-        <label htmlFor="accountType">Account type</label>
-        <input
-          type="text"
-          id="accountType"
-          value={accountType}
-          onChange={(e) => setAccountType(e.target.value)}
-          required
-        />
-        <br />
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        Add Account
+      </button>
 
-        <label htmlFor="accountPassword">Account password</label>
-        <input
-          type="password"
-          id="accountPassword"
-          value={accountPassword}
-          onChange={(e) => setAccountPassword(e.target.value)}
-          required
-        />
-        <br />
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                Add New Account
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form onSubmit={handleAddAccount}>
+                <div class="mb-3">
+                  <label for="accountType" class="form-label">
+                    Account Type
+                  </label>
+                  <input
+                    type="text"
+                    id="accountType"
+                    class="form-control"
+                    value={accountType}
+                    onChange={(e) => setAccountType(e.target.value)}
+                    required
+                  />
+                </div>
 
-        <button type="submit" className="btn btn-primary">
-          Add Account
-        </button>
-      </form>
+                <div class="mb-3">
+                  <label for="accountPassword" class="form-label">
+                    Account Password
+                  </label>
+                  <input
+                    type="password"
+                    id="accountPassword"
+                    class="form-control"
+                    value={accountPassword}
+                    onChange={(e) => setAccountPassword(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+
+                  <button type="submit" class="btn btn-primary">
+                    Add Account
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <h2>Added Accounts</h2>
       <ul>
