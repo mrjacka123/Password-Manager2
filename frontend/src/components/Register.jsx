@@ -49,19 +49,19 @@ function Register() {
           <div className="card shadow-lg p-4">
             <h2 className="text-center text-primary mb-4">Register</h2>
             <form onSubmit={handleSubmit}>
-              <div className="mb-3">
+              <div className="mb-3 text-white">
                 <label htmlFor="username" className="form-label">
                   Username
                 </label>
                 <input
                   name="username"
                   id="username"
-                  className="form-control"
+                  className="form-control bg-dark text-white"
                   placeholder="Enter your username"
                   onChange={handleChange}
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-3 text-white">
                 <label htmlFor="email" className="form-label">
                   Email
                 </label>
@@ -69,12 +69,12 @@ function Register() {
                   type="email"
                   name="email"
                   id="email"
-                  className="form-control"
+                  className="form-control bg-dark text-white"
                   placeholder="Enter your email"
                   onChange={handleChange}
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-3 text-white">
                 <label htmlFor="password" className="form-label">
                   Password
                 </label>
@@ -82,7 +82,7 @@ function Register() {
                   type="password"
                   name="password"
                   id="password"
-                  className="form-control"
+                  className="form-control bg-dark text-white"
                   placeholder="Enter your password"
                   onChange={handleChange}
                 />

@@ -55,7 +55,7 @@ function Login() {
           <div className="card shadow-lg p-4">
             <h2 className="text-center text-primary mb-4">Login</h2>
             <form onSubmit={handleSubmit}>
-              <div className="mb-3">
+              <div className="mb-3 text-white">
                 <label htmlFor="email" className="form-label">
                   Email
                 </label>
@@ -63,13 +63,13 @@ function Login() {
                   type="email"
                   name="email"
                   id="email"
-                  className="form-control"
+                  className="form-control bg-dark text-white"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-3 text-white">
                 <label htmlFor="password" className="form-label">
                   Password
                 </label>
@@ -77,7 +77,7 @@ function Login() {
                   type="password"
                   name="password"
                   id="password"
-                  className="form-control"
+                  className="form-control bg-dark text-white"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleChange}
