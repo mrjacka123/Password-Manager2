@@ -53,7 +53,8 @@ function Login() {
       <div className="bgImg">
         <div className="login-container d-flex justify-content-center align-items-center">
           <div className="card shadow-lg p-4">
-            <h2 className="text-center text-primary mb-4">Login</h2>
+            <h2 className="text-white mb-4 custom-underline">Login</h2>
+
             <form onSubmit={handleSubmit}>
               <div className="mb-3 text-white">
                 <label htmlFor="email" className="form-label">
@@ -101,8 +102,11 @@ function Login() {
                 </div>
               )}
             </form>
-            <p className="text-center mt-3">
-              Don't have an account? <Link to="/register">Register here</Link>
+            <p className="text-center mt-3 text-secondary">
+              Don't have an account?{" "}
+              <Link className="text-decoration-none" to="/register">
+                Register here
+              </Link>
             </p>
 
             <span

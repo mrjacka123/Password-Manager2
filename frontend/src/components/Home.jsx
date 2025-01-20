@@ -3,8 +3,18 @@ import axios from "axios";
 import { useLocation, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./CSS/Home.css";
-import { Key, Lock, LogOut, Plus, Edit2, Trash2, Settings } from "lucide-react";
+import {
+  Key,
+  Lock,
+  LogOut,
+  Plus,
+  Edit2,
+  Trash2,
+  Settings,
+  User,
+} from "lucide-react";
 import Footer from "./Footer";
+import Swal from "sweetalert2";
 
 function Home() {
   const { state } = useLocation();
@@ -18,6 +28,18 @@ function Home() {
   useEffect(() => {
     fetchAccounts();
   }, []);
+
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+  });
 
   const fetchAccounts = async () => {
     try {
@@ -41,10 +63,13 @@ function Home() {
           accountPassword,
         }
       );
-
       setAccountType("");
       setAccountPassword("");
       setAccounts((prev) => [...prev, response.data]);
+      Toast.fire({
+        icon: "success",
+        title: "Account added successfully",
+      });
     } catch (error) {
       console.error("Error adding account:", error);
     }
@@ -65,18 +90,46 @@ function Home() {
         )
       );
       setEditAccount(null); // Close the modal
+      Toast.fire({
+        icon: "success",
+        title: "Account updated successfully",
+      });
     } catch (error) {
       console.error("Error updating account:", error);
     }
   };
 
   const handleDeleteAccount = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/accounts/delete/${id}`);
-      setAccounts((prev) => prev.filter((account) => account._id !== id));
-    } catch (error) {
-      console.error("Error deleting account:", error);
-    }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you really want to delete this account? This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`http://localhost:5000/api/accounts/delete/${id}`);
+          setAccounts((prev) => prev.filter((account) => account._id !== id));
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: "The account has been deleted.",
+            timer: 2000,
+          });
+        } catch (error) {
+          console.error("Error deleting account:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something went wrong. Unable to delete the account.",
+          });
+        }
+      }
+    });
   };
 
   const userAccounts = accounts.filter(
@@ -92,17 +145,10 @@ function Home() {
         style={{ backgroundColor: "#28282B" }}
         className="container flex-grow-1 mt-5"
       >
-        {/* <p
-          style={{ color: "white", display: "hide" }}
-          className="text-center text-white"
-        >
-          Email: {state.email}
-        </p> */}
         <h1 className="display-4 text-center text-primary mb-4">
           Hello, {state.username}
         </h1>
 
-        <br />
         <div
           style={{ gap: "5px" }}
           className="d-flex justify-content-center mb-4"
@@ -116,14 +162,16 @@ function Home() {
             </button>
           </Link>
         </div>
-        <div className="d-flex justify-content-center mb-4">
+        <hr style={{ border: "solid 2px white", marginBottom: "30px" }} />
+
+        <div className="d-flex mb-4">
           <button
             type="button"
-            className="btn btn-success btn-lg"
+            className="btn btn-success btn-md"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
           >
-            Add Account
+            +<User size={20} /> Add Account
           </button>
         </div>
         {/* Add Account Modal */}
@@ -187,7 +235,6 @@ function Home() {
                     >
                       Close
                     </button>
-
                     <button type="submit" className="btn btn-primary">
                       Add Account
                     </button>
@@ -197,7 +244,6 @@ function Home() {
             </div>
           </div>
         </div>
-        <hr style={{ border: "solid 1px white", marginBottom: "30px" }} />
 
         <h2 className="text-center text-secondary m-4">Your Accounts</h2>
         <div className="row row-cols-1 row-cols-md-3 g-4">
@@ -238,8 +284,6 @@ function Home() {
           ))}
         </div>
 
-        <Footer />
-
         {editAccount && (
           <div className="modal show d-block" tabIndex="-1">
             <div className="modal-dialog modal-dialog-centered">
@@ -250,45 +294,65 @@ function Home() {
                     type="button"
                     className="btn-close bg-white"
                     onClick={() => setEditAccount(null)}
+                    aria-label="Close"
                   ></button>
                 </div>
                 <div className="modal-body">
-                  <label className="mb-2">Username</label>
-                  <input
-                    style={{ border: "none" }}
-                    type="text"
-                    value={editAccountType}
-                    onChange={(e) => setEditAccountType(e.target.value)}
-                    className="form-control bg-dark text-white mb-4"
-                  />
-                  <label className="mb-2">Password</label>
-                  <input
-                    type="text"
-                    style={{ border: "none" }}
-                    value={editAccountPassword}
-                    onChange={(e) => setEditAccountPassword(e.target.value)}
-                    className="form-control bg-dark text-white mb-4"
-                  />
-                </div>
-                <div className="modal-footer bg-black">
-                  <button
-                    onClick={() => setEditAccount(null)}
-                    className="btn btn-secondary"
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleUpdateAccount(editAccount._id);
+                    }}
                   >
-                    Close
-                  </button>
-                  <button
-                    onClick={() => handleUpdateAccount(editAccount._id)}
-                    className="btn btn-primary"
-                  >
-                    Save changes
-                  </button>
+                    <div className="mb-3">
+                      <label htmlFor="editAccountType" className="form-label">
+                        Username or Email
+                      </label>
+                      <input
+                        type="text"
+                        id="editAccountType"
+                        className="form-control bg-dark text-white"
+                        value={editAccountType}
+                        onChange={(e) => setEditAccountType(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label
+                        htmlFor="editAccountPassword"
+                        className="form-label"
+                      >
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        id="editAccountPassword"
+                        className="form-control bg-dark text-white"
+                        value={editAccountPassword}
+                        onChange={(e) => setEditAccountPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="modal-footer bg-black">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => setEditAccount(null)}
+                      >
+                        Close
+                      </button>
+                      <button type="submit" className="btn btn-primary">
+                        Update Account
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

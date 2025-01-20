@@ -47,7 +47,8 @@ function Register() {
       <div className="bgImg">
         <div className="register-container d-flex justify-content-center align-items-center">
           <div className="card shadow-lg p-4">
-            <h2 className="text-center text-primary mb-4">Register</h2>
+            <h2 className="text-white mb-4 custom-underline">Register</h2>
+
             <form onSubmit={handleSubmit}>
               <div className="mb-3 text-white">
                 <label htmlFor="username" className="form-label">
@@ -91,8 +92,11 @@ function Register() {
                 Register
               </button>
             </form>
-            <p className="text-center mt-3">
-              Already have an account? <Link to="/login">Login here</Link>
+            <p className="text-center mt-3 text-secondary">
+              Already have an account?{" "}
+              <Link className="text-decoration-none" to="/login">
+                Login here
+              </Link>
             </p>
 
             <span
